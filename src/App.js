@@ -11,7 +11,7 @@ export default class App extends Component {
     return (
       <Router>
         <div>
-          <Route exact path="/" component={AdminDashBoard} />
+          <Route exact path="/" component={StudentDashboard} />
           <Route path="/admin/dashboard" exact component={AdminDashBoard} />
           <Route path="/student/dashboard" exact component={StudentDashboard} />
         </div>

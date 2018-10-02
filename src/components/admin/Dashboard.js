@@ -55,7 +55,7 @@ export default class Dashboard extends Component {
                   <p><strong>Class:</strong> BCA Ist</p>
                   <p><strong>Enroll No:</strong> 123456789</p>
                   <p><strong>Docs Issued:</strong> True</p>
-                  <p className="mt-5"><button class="btn btn-info">Update</button></p>
+                  <p className="mt-5"><button class="btn btn-info">Upload Document</button></p>
                 </div>
               </div>
               
