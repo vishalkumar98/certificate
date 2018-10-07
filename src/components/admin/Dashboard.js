@@ -117,7 +117,6 @@ export default class Dashboard extends Component {
   // end add student
 
   changeCurrentStudent(index) {
-
     let getStudent = this.state.studentList[index]
     this.setState({currentStudent: getStudent})
   }
@@ -161,7 +160,9 @@ export default class Dashboard extends Component {
             </div>
             <div className="col-md-6 text-center">
               <h3>Student Detail</h3>
+              {this.state.currentStudent ? 
               <div className="row mt-5">
+                
                 <div className="col-md-6">
                 <img className="img img-responsive img-thumbnail" src={this.state.currentStudent.image} height="200px"></img>
                 </div>
@@ -170,12 +171,11 @@ export default class Dashboard extends Component {
                   <p><strong>Class:</strong>{this.state.currentStudent.clas}</p>
                   <p><strong>Enroll No:</strong> {this.state.currentStudent.rollno}</p>
                   <p><strong>Docs Issued:</strong> True</p>
+                  <p><strong>Password:</strong> {this.state.currentStudent.password}</p>
                   <p className="mt-5"><button className="btn btn-info">Upload Document</button></p>
-                </div>
+                </div> 
               </div>
-              
-              
-              
+              : <p>No Student Available</p> }
             </div>
           </div>
         </div>
