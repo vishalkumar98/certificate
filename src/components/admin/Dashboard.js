@@ -114,9 +114,13 @@ export default class Dashboard extends Component {
       this.setState({loader: false})
     })
   }
-
   // end add student
 
+  changeCurrentStudent(index) {
+
+    let getStudent = this.state.studentList[index]
+    this.setState({currentStudent: getStudent})
+  }
 
   render() {
     return (
@@ -146,7 +150,7 @@ export default class Dashboard extends Component {
                           <td>{index+1}</td>
                           <td>{std.rollno}</td>
                           <td className="text-left">{std.name}</td>
-                          <td><a href="#">view</a></td>
+                          <td><a href="#" onClick={this.changeCurrentStudent.bind(this, index)}>view</a></td>
                         </tr>
                       )
                     })}
