@@ -1,15 +1,130 @@
 import React, { Component } from 'react'
 
 export default class Dashboard extends Component {
+  
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      addstudent: {
+        name: '',
+        clas: '',
+        rollno: '',
+        image: ''
+      },
+      studentList: [],
+      loader: true,
+      currentStudent: {}
+    }
+  }
+
+  componentDidMount () {
+    this.getAllStudent()
+  }
+
+  getAllStudent = () => {
+    fetch('http://localhost:3000/admin/getstudents', {
+        method: 'GET'
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      this.setState({studentList: data}, () => {
+        this.setState({loader: false})
+        this.setState({currentStudent: data[0]})
+      })
+    })
+    .catch((error) => console.log(error))
+  }
+  
   styles = {
     studentRow : {
       border: '1px solid #cccccc'
     }
   }
 
+
+  // add student
+
+  changeName = (event) => {
+    let student = {...this.state.addstudent}
+    student.name = event.target.value
+
+    this.setState({addstudent: student})
+  }
+
+  changeClas = (event) => {
+    let student = {...this.state.addstudent}
+    student.clas = event.target.value
+    this.setState({addstudent: student})
+  }
+
+  changeRollNo = (event) => {
+    let student = {...this.state.addstudent}
+    student.rollno = event.target.value
+    this.setState({addstudent: student})
+  }
+
+  changeImage = (event) => {
+    let file = event.target.files[0]
+    let document = "";
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+        document = reader.result;
+        let student = {...this.state.addstudent}
+        student.image = document
+
+        this.setState({addstudent: student},  () => {
+          console.log('image saved')
+        })
+      
+    };
+    reader.onerror = function (error) {
+        console.log('Error: ', error);
+    };
+  }
+
+  // main method
+  addstudent = () => {
+    
+    this.setState({loader: true})
+
+    const student = {
+      name: this.state.addstudent.name,
+      clas: this.state.addstudent.clas,
+      rollno: this.state.addstudent.rollno,
+      image: this.state.addstudent.image
+    }
+
+    fetch('http://localhost:3000/admin/addstudent', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(student)
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log('find all students')
+      this.getAllStudent()
+    })
+    .catch((error) => {
+      console.log(error)
+      this.setState({loader: false})
+    })
+  }
+
+  // end add student
+
+
   render() {
     return (
       <div>
+        {this.state.loader ?
+        <div className="loader loader-default is-active" data-text="Please Wait..." data-blink
+                         id="registrationLoader">
+                    </div> : null }
         <div className="container pt-3">
           <div className="row">
             <div className="col-md-6 text-center">
@@ -18,27 +133,23 @@ export default class Dashboard extends Component {
                 <table className="table">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Name</th>
+                      <th>#</th>
+                      <th>Enroll No.</th>
+                      <th className="text-left">Name</th>
                       <th>Detail</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td>shiv shankar</td>
-                      <td><a href="#">view</a></td>
-                    </tr>
-                    <tr>
-                      <td>1</td>
-                      <td>Vishal Sharma</td>
-                      <td><a href="#">view</a></td>
-                    </tr>
-                    <tr>
-                      <td>1</td>
-                      <td>Rahul Kumar</td>
-                      <td><a href="#">view</a></td>
-                    </tr>
+                    {this.state.studentList.map((std, index) => {
+                      return (
+                        <tr>
+                          <td>{index+1}</td>
+                          <td>{std.rollno}</td>
+                          <td className="text-left">{std.name}</td>
+                          <td><a href="#">view</a></td>
+                        </tr>
+                      )
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -48,14 +159,14 @@ export default class Dashboard extends Component {
               <h3>Student Detail</h3>
               <div className="row mt-5">
                 <div className="col-md-6">
-                <img className="img img-responsive img-thumbnail" src="https://lh3.googleusercontent.com/cAHdTxrS4HoSuwKt0hzn8L6xbz-ZW9t7tOtsYztvuC4Z00kUVNo6y83smCcaPtgPV8WYkcGOJOamN5kbu5H3sYQ0LOm_MNvubfUmCXrObmWD0Q2sdNtYCn1NdpuJU9lZ2xyT4l5uYAbFEz-zEId6tt_23zkS5Ak-ojtVIAapAhq_kfaa4RWhU0zwTohk6fOM0EsbxNk9vXwCAW1q6384V0gMa1IZ_FeFHW1D6FdD6gvqmGIOf19pmFnfL2tP2g73R3tVvuxa4d-ImyqIb1PWFQ5uxmbdOYnl-uo6MKD0VcuGWxOXLwsKtvrAbLDb3vRzcW4cccifJxumbdjQiMy0CzvOTTMjg8zNykDmki_KGd9_K5LTD3puUulDe2WQBoeRmaH0PHXQAavd-XHPa9X0me60nx8fUN_Fl5vc3O4f2Is3Ecc67hknE5Tma06rZdBdxSXYEfJyBfUv1FholcY14RMgoiYlij6s7oSKN6-zTfn8G1tKeHtw73WP_dBZvqTtWy8crU9NJGlkfx-W3Q0ziIt_hmU0lMzggS-900Evbv-njc4n147KkyiWavHB5qIODNwp26_fy3ObRPacG4NxWQyq-j2beW2yfdpFqWcrDLJ4Zfi67SAawvTVpSLgHhE=w493-h657-no" height="200px"></img>
+                <img className="img img-responsive img-thumbnail" src={this.state.currentStudent.image} height="200px"></img>
                 </div>
                 <div className="col-md-6 text-left">
-                  <p><strong>Name:</strong> Shiv Shankar Sharma</p>
-                  <p><strong>Class:</strong> BCA Ist</p>
-                  <p><strong>Enroll No:</strong> 123456789</p>
+                  <p><strong>Name:</strong> {this.state.currentStudent.name}</p>
+                  <p><strong>Class:</strong>{this.state.currentStudent.clas}</p>
+                  <p><strong>Enroll No:</strong> {this.state.currentStudent.rollno}</p>
                   <p><strong>Docs Issued:</strong> True</p>
-                  <p className="mt-5"><button class="btn btn-info">Upload Document</button></p>
+                  <p className="mt-5"><button className="btn btn-info">Upload Document</button></p>
                 </div>
               </div>
               
@@ -76,28 +187,28 @@ export default class Dashboard extends Component {
                 <form>
                     <div className="form-group text-left">
                         <label htmlFor="exampleInputEmail1">Name</label>
-                        <input type="text" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                              placeholder="Name" />
+                        <input type="text" className="form-control" aria-describedby="emailHelp"
+                              placeholder="Name" onChange={this.changeName} value={this.state.addstudent.name}/>
                     </div>
                     <div className="form-group text-left">
                         <label htmlFor="exampleInputPassword1">Class</label>
-                        <input type="text" className="form-control" id="exampleInputPassword1" placeholder="Class" />
+                        <input type="text" className="form-control" placeholder="Class" onChange={this.changeClas} value={this.state.addstudent.clas}/>
                     </div>
                     <div className="form-group text-left">
                         <label htmlFor="exampleInputPassword1">Enroll Number</label>
-                        <input type="number" className="form-control" id="exampleInputPassword1" placeholder="Enroll Number" />
+                        <input type="text" className="form-control"  placeholder="Enroll Number" onChange={this.changeRollNo} value={this.state.addstudent.rollno} />
                     </div>
                     <div className="form-group text-left">
                         <label htmlFor="exampleInputPassword1">Image</label>
                         <br />
-                        <input type="file" />
+                        <input type="file" onChange={this.changeImage}/>
                     </div>
                 </form>
                 </div>
                 
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-info">Save</button>
+                <button type="button" className="btn btn-info" onClick={this.addstudent}>Save</button>
                 <button type="button" className="btn btn-danger" data-dismiss="modal">Close</button>
               </div>
             </div>
