@@ -5,7 +5,6 @@ export default class Login extends Component {
     constructor (props) {
         super(props)
 
-
         this.state = {
             email: '',
             password: '',
@@ -32,15 +31,15 @@ export default class Login extends Component {
 
     login = () => {
 
-        if (this.state.email == '') {
+        if (this.state.email === '') {
             this.setState({showEmailError: true})
         } 
 
-        if (this.state.password == '') {
+        if (this.state.password === '') {
             this.setState({showPasswordError: true})
         }
 
-        if (this.state.email == '' || this.state.password == '') {
+        if (this.state.email === '' || this.state.password === '') {
             return
         }
 
@@ -67,6 +66,7 @@ export default class Login extends Component {
                     this.setState({authError: true})
                 } else {
                     localStorage.setItem('studenttoken', data.token)
+                    localStorage.setItem('studentRoll',data.rollno)
                     this.props.history.push('/student/dashboard')
                     this.setState({authError: false})
                 }
@@ -74,11 +74,9 @@ export default class Login extends Component {
             .catch((error) => {
             console.log(error)
             })
-
     }
 
     render() {
-
         const styles = {
             container : {
                 border: '1px solid #ccc',

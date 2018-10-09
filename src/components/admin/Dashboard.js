@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import axios from 'axios';
 
 export default class Dashboard extends Component {
   
@@ -14,7 +15,8 @@ export default class Dashboard extends Component {
       },
       studentList: [],
       loader: true,
-      currentStudent: {}
+      currentStudent: {},
+      filename: ''
     }
   }
 
@@ -121,6 +123,41 @@ export default class Dashboard extends Component {
     this.setState({currentStudent: getStudent})
   }
 
+  changeDocument = (event) => {
+    let file = event.target.files[0]
+    let document = "";
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+        document = reader.result;
+      
+        this.setState({document: document},  () => {
+          console.log('document saved')
+        })
+      
+    };
+    reader.onerror = function (error) {
+        console.log('Error: ', error);
+    };
+  }
+
+
+  uploadDocument = () => {
+      let data = {
+        docname: this.state.filename,
+        documentData: this.state.document,
+        rollno: this.state.currentStudent.rollno
+      }
+
+      axios.post('http://localhost:3000/admin/upload', data)
+        .then((res) => console.log(res))
+        .catch((error) => console.log(error))
+  }
+
+  changeFileName = (event) => {
+      this.setState({filename: event.target.value})
+  }
+
   render() {
     return (
       <div>
@@ -172,7 +209,7 @@ export default class Dashboard extends Component {
                   <p><strong>Enroll No:</strong> {this.state.currentStudent.rollno}</p>
                   <p><strong>Docs Issued:</strong> True</p>
                   <p><strong>Password:</strong> {this.state.currentStudent.password}</p>
-                  <p className="mt-5"><button className="btn btn-info">Upload Document</button></p>
+                  <p className="mt-5"><button className="btn btn-info" data-toggle="modal" data-target="#addDocModal">Upload Document</button></p>
                 </div> 
               </div>
               : <p>No Student Available</p> }
@@ -218,6 +255,36 @@ export default class Dashboard extends Component {
             </div>
           </div>
         </div>
+
+        {/* Modal for document */}
+        <div className="modal" id="addDocModal">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h4 className="modal-title">Upload Document</h4>
+              </div>
+              <div className="modal-body">
+                <div className="container">
+                
+                    <div className="form-group text-left">
+                        <label>File Name</label>
+                        <input type="text" onChange={this.changeFileName} value={this.state.filename} />
+                        <label htmlFor="exampleInputPassword1">File</label>
+                        <br />
+                        <input type="file" onChange={this.changeDocument}/>
+                    </div>
+                
+                </div>
+                
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-info" onClick={this.uploadDocument}>Save</button>
+                <button type="button" className="btn btn-danger" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     )
   }
