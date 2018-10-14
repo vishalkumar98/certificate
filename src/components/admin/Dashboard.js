@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import $ from 'jquery';
 
 export default class Dashboard extends Component {
   
@@ -16,7 +17,9 @@ export default class Dashboard extends Component {
       studentList: [],
       loader: true,
       currentStudent: {},
-      filename: ''
+      filename: '',
+      addStudentSuccess: false,
+      addStudentDocumentSuccess: false
     }
   }
 
@@ -110,7 +113,16 @@ export default class Dashboard extends Component {
     .then((data) => {
       console.log('find all students')
       this.getAllStudent()
-    })
+
+      let addstudent = {
+        name: '',
+        clas: '',
+        rollno: '',
+        image: ''
+      }
+      this.setState({addstudent: addstudent})
+      $('#closeAddStudentModal').click();
+    })  
     .catch((error) => {
       console.log(error)
       this.setState({loader: false})
@@ -250,7 +262,7 @@ export default class Dashboard extends Component {
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-info" onClick={this.addstudent}>Save</button>
-                <button type="button" className="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" className="btn btn-danger" data-dismiss="modal" id="closeAddStudentModal">Close</button>
               </div>
             </div>
           </div>

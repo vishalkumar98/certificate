@@ -63,7 +63,6 @@ export default class Dashboard extends Component {
                         </tr>
                       )
                     })}
-                    
                   </tbody>
                 </table>
 
