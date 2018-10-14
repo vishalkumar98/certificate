@@ -162,7 +162,7 @@ export default class Dashboard extends Component {
       }
 
       axios.post('http://localhost:3000/admin/upload', data)
-        .then((res) => console.log(res))
+        .then((res) => $('#uploadDocumentClose').click())
         .catch((error) => console.log(error))
   }
 
@@ -291,7 +291,7 @@ export default class Dashboard extends Component {
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-info" onClick={this.uploadDocument}>Save</button>
-                <button type="button" className="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" className="btn btn-danger" data-dismiss="modal" id="uploadDocumentClose">Close</button>
               </div>
             </div>
           </div>
